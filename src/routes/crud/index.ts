@@ -1,12 +1,12 @@
-import {FastifyPluginAsync} from 'fastify'
-import {prisma} from '../../lib/prisma'
-import {Prisma } from "../../generated/prisma/client"
-import type {User} from "../../generated/prisma/client"
+import { FastifyPluginAsync } from 'fastify'
+import { prisma } from '../../lib/prisma'
+import type { User } from "../../generated/prisma/client"
+import { Prisma } from "../../generated/prisma/client"
 
 type JSONAPIError = { detail: string }
 type WrappedData<T> = { data: T } | { errors: JSONAPIError[] }
 
-const dataWrapper = <T>(unwrapped: T): WrappedData<T> => ({data: unwrapped})
+const dataWrapper = <T>(unwrapped: T): WrappedData<T> => ({ data: unwrapped })
 
 const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     // index
@@ -33,7 +33,7 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     type UserGet = { Params: IdParam, Reply: WrappedData<User | null> }
     fastify.get<UserGet>('/:id', async function (request, reply) {
         const id = Number.parseInt(request.params.id)
-        if (Number.isNaN(id)) return reply.code(400).send({errors: [{detail: 'Invalid ID'}]})
+        if (Number.isNaN(id)) return reply.code(400).send({ errors: [{ detail: 'Invalid ID' }] })
 
         const user = await prisma.user.findUnique({
             where: {
@@ -41,7 +41,7 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             }
         })
 
-        if (!user) return reply.code(404).send({ errors: [{ detail: 'User not found' }]})
+        if (!user) return reply.code(404).send({ errors: [{ detail: 'User not found' }] })
 
         return reply.send(dataWrapper(user))
     })
@@ -60,7 +60,7 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
             return reply.code(201).send(dataWrapper(user))
         } catch {
-            return reply.code(400).send({ errors: [{ detail: 'Invalid request' }]})
+            return reply.code(400).send({ errors: [{ detail: 'Invalid request' }] })
         }
     })
 
@@ -68,7 +68,7 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     type UserPut = { Params: IdParam, Body: UserBody, Reply: WrappedData<User> }
     fastify.put<UserPut>('/:id', async function (request, reply) {
         const id = Number.parseInt(request.params.id)
-        if (Number.isNaN(id)) return reply.code(400).send({errors: [{detail: 'Invalid ID'}]})
+        if (Number.isNaN(id)) return reply.code(400).send({ errors: [{ detail: 'Invalid ID' }] })
 
         try {
             const updatedUser = await prisma.user.update({
@@ -85,10 +85,10 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 // not found
-                if (e.code === 'P2025') return reply.code(404).send({ errors: [{ detail: 'User not found' }]})
+                if (e.code === 'P2025') return reply.code(404).send({ errors: [{ detail: 'User not found' }] })
             }
 
-            return reply.code(400).send({ errors: [{ detail: 'Invalid request' }]})
+            return reply.code(400).send({ errors: [{ detail: 'Invalid request' }] })
         }
     })
 
@@ -96,7 +96,7 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     type UserDelete = { Params: IdParam }
     fastify.delete<UserDelete>('/:id', async function (request, reply) {
         const id = Number.parseInt(request.params.id)
-        if (Number.isNaN(id)) return reply.code(400).send({errors: [{detail: 'Invalid ID'}]})
+        if (Number.isNaN(id)) return reply.code(400).send({ errors: [{ detail: 'Invalid ID' }] })
 
         try {
             await prisma.user.delete({
@@ -109,10 +109,10 @@ const crud: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 // not found
-                if (e.code === 'P2025') return reply.code(404).send({ errors: [{ detail: 'User not found' }]})
+                if (e.code === 'P2025') return reply.code(404).send({ errors: [{ detail: 'User not found' }] })
             }
 
-            return reply.code(400).send({ errors: [{ detail: 'Invalid request' }]})
+            return reply.code(400).send({ errors: [{ detail: 'Invalid request' }] })
         }
     })
 }
