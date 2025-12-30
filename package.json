@@ -22,7 +22,8 @@
     "fastify-plugin": "^5.0.0",
     "@fastify/autoload": "^6.0.0",
     "@fastify/sensible": "^6.0.0",
-    "fastify-cli": "^7.4.1"
+    "fastify-cli": "^7.4.1",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.8",
